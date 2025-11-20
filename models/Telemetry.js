@@ -1,20 +1,20 @@
+// models/Telemetry.js
 const mongoose = require('mongoose');
 
 const telemetrySchema = new mongoose.Schema({
-  // Ahora es OPCIONAL, porque tu ESP no lo está enviando
-  device_id: { type: String, required: false },
-
-  // El ESP sí envía timestamp, lo seguimos dejando requerido
+  device_id: { type: String, required: true },
   timestamp: { type: Date, required: true },
 
-  // Aceptamos lo que manda el ESP: temp y hum
+  // Datos del DHT11
+  temperature: Number,
+  humidity: Number,
+
+  // Opcional: si algún día mandas temp/hum cortos,
+  // igual se pueden guardar:
   temp: Number,
   hum: Number,
 
-  // Si más adelante quieres usar nombres "bonitos":
-  // temperature: Number,
-  // humidity: Number,
-
+  // Sensor touch (si luego lo usas)
   touch: {
     t0: Number,
     t3: Number,
@@ -24,8 +24,11 @@ const telemetrySchema = new mongoose.Schema({
     t7: Number
   },
 
+  // Datos del ESP32 (opcionales)
   wifi_rssi: Number,
   free_heap: Number,
+}, {
+  timestamps: false, // usamos nuestro propio timestamp
 });
 
 module.exports = mongoose.model('Telemetry', telemetrySchema);
