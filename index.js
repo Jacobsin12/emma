@@ -1,10 +1,11 @@
+// server.js
 require('dotenv').config();
 
-const express   = require('express');
+const express    = require('express');
 const bodyParser = require('body-parser');
-const mongoose  = require('mongoose');
-const Telemetry = require('./models/Telemetry');
-const morgan    = require('morgan');
+const mongoose   = require('mongoose');
+const Telemetry  = require('./models/Telemetry');
+const morgan     = require('morgan');
 
 const MONGO_URI = process.env.MONGO_URI;
 const PORT      = process.env.PORT || 3000;
@@ -22,6 +23,7 @@ app.use(morgan('dev'));
 app.use(bodyParser.json({ limit: '1mb' }));
 
 // ----------- POST /api/telemetry -----------
+// Guarda telemetría enviada por el ESP32
 app.post('/api/telemetry', async (req, res) => {
   try {
     const body = req.body;
@@ -65,6 +67,7 @@ app.post('/api/telemetry', async (req, res) => {
 });
 
 // ----------- GET /api/telemetry/latest -----------
+// Devuelve las últimas lecturas, ordenadas por ts_server desc
 app.get('/api/telemetry/latest', async (req, res) => {
   try {
     const limit = Math.min(parseInt(req.query.limit || '50'), 1000);
@@ -81,6 +84,7 @@ app.get('/api/telemetry/latest', async (req, res) => {
 });
 
 // ----------- GET /api/telemetry/count -----------
+// Devuelve cuántos documentos hay en la colección
 app.get('/api/telemetry/count', async (req, res) => {
   try {
     const count = await Telemetry.countDocuments();
@@ -91,7 +95,19 @@ app.get('/api/telemetry/count', async (req, res) => {
   }
 });
 
-// ----------- Iniciar servidor -----------
+// ----------- NUEVO: GET /api/update -----------
+// Devuelve un intervalo aleatorio entre 4 y 60 segundos
+app.get('/api/update', (req, res) => {
+  const min = 4;
+  const max = 60;
+  const interval = Math.floor(Math.random() * (max - min + 1)) + min;
+
+  return res.json({
+    interval_seconds: interval
+  });
+});
+
+// ----------- Iniciar servidor ----------- 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);
 });
