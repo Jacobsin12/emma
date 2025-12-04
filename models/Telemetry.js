@@ -1,13 +1,8 @@
-// models/Telemetry.js
 const mongoose = require('mongoose');
 
 const telemetrySchema = new mongoose.Schema({
   device_id: { type: String, required: true },
-
-  // Timestamp del ESP32 (UTC, viene en el JSON)
   ts_esp: { type: Date, required: true },
-
-  // Timestamp del servidor (cuando llega la petición)
   ts_server: { type: Date, required: true, default: Date.now },
 
   temperature: Number,
@@ -23,7 +18,7 @@ const telemetrySchema = new mongoose.Schema({
   },
 
   wifi_rssi: Number,
-  free_heap: Number,
+  free_heap: Number
 });
 
 module.exports = mongoose.model('Telemetry', telemetrySchema);
