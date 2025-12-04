@@ -12,7 +12,7 @@ const MONGO_URI = process.env.MONGO_URI;
 const PORT      = process.env.PORT || 3000;
 
 // ------------------- CORS -------------------
-app = express();
+const app = express();
 app.use(cors({
   origin: "*",       // ← permite que Angular (Vercel) acceda
   methods: "GET,POST"
@@ -104,9 +104,9 @@ app.get('/api/update', (req, res) => {
   const max = 60;
   const interval = Math.floor(Math.random() * (max - min + 1)) + min;
 
-  return res.json({
-    interval_seconds: interval
-  });
+  // 🔴 ANTES: res.json({ interval_seconds: interval })
+  // ✅ AHORA: solo devolvemos el número en texto plano
+  res.type('text/plain').send(String(interval));
 });
 
 // -------- Raíz (opcional para evitar 404 en /) --------
@@ -118,3 +118,4 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);
 });
+// models/Telemetry.js
